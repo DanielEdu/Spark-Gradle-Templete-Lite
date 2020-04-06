@@ -1,6 +1,7 @@
 package template.spark
 
 import org.apache.spark.sql.functions._
+import template.spark.utils.InitSpark
 
 final case class Person(firstName: String, lastName: String,
                         country: String, age: Int)
@@ -13,6 +14,7 @@ object Main extends InitSpark {
     val sparkVersion = spark.version
     val scalaVersion = util.Properties.versionNumberString
 
+
     println("SPARK VERSION = " + sparkVersion)
     println("SCALA VERSION = " + scalaVersion)
 
@@ -24,12 +26,12 @@ object Main extends InitSpark {
 
     println("Reading from csv file: people-example.csv")
     val persons = reader.csv("people-example.csv").as[Person]
-    persons.show(2,false)
+    persons.show(2,truncate = false)
 
     val averageAge = persons.agg(avg("age"))
                      .first.get(0).asInstanceOf[Double]
     println(f"Average Age: $averageAge%.2f")
 
-    close
+    close()
   }
 }
