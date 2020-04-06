@@ -1,0 +1,72 @@
+buildscript {
+    repositories {
+        maven { url = ARTIFACTORY_URL }
+    }
+    dependencies {
+        classpath "com.gradle.publish:plugin-publish-plugin:${publishGradlePluginVersion}"
+    }
+}
+
+
+plugins {
+    id 'java'
+}
+
+group 'template.spark'
+version '1.0-SNAPSHOT'
+
+apply plugin: 'java'
+apply plugin: 'scala'
+apply plugin: 'idea'
+
+
+
+configurations {
+    compile
+    provided
+    compile.extendsFrom provided
+}
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+
+dependencies {
+
+    compile group: 'org.scala-lang', name: 'scala-library', version: scalaVersion
+    compile group: 'org.scala-lang', name: 'scala-reflect', version: scalaVersion
+    compile group: 'org.scala-lang', name: 'scala-compiler', version: scalaVersion
+
+    provided group: 'org.apache.spark', name: 'spark-core_2.11', version: sparkVersion
+    provided group: 'org.apache.spark', name: 'spark-sql_2.11', version: sparkVersion
+    compile group: 'com.databricks', name: 'spark-avro_2.11', version: '4.0.0'
+}
+
+
+compileJava {
+    options.encoding = "UTF-8"
+}
+
+
+task copyDependencies(type: Copy) {
+    String outputDir = "$project.projectDir/build/"+ version +"/dependencies";
+    from configurations.runtime - configurations.provided
+    into outputDir
+}
+
+
+jar {
+    classifier = 'all'
+    manifest {
+        attributes 'Implementation-Title': title,
+                'Implementation-Version': version,
+                'Main-Class': mainClassFile
+    }
+    include{sourceSets.main.output.classesDirs}
+    zip64 true
+}
+
+
+
