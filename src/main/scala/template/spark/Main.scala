@@ -13,10 +13,12 @@ object Main extends InitSpark {
 
     val sparkVersion = spark.version
     val scalaVersion = util.Properties.versionNumberString
+    val javaVersionn = java.lang.Runtime.version()
 
 
     println("SPARK VERSION = " + sparkVersion)
     println("SCALA VERSION = " + scalaVersion)
+    println("JAVA  VERSION = " + javaVersionn)
 
 
     val listRdd = spark.range(1, 101)
